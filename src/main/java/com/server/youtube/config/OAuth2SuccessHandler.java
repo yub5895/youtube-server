@@ -11,6 +11,8 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Slf4j
 @Component
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
@@ -21,12 +23,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     @Autowired
     private MemberDAO dao;
 
-
-    public OAuth2SuccessHandler(TokenProvider tokenProvider, MemberDAO dao) {
-
-    }
-
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User user = (OAuth2User) authentication.getPrincipal();
         log.info("google : " + user);
 
@@ -45,7 +42,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // JWT 토큰 생성
         String token = tokenProvider.create(member);
 
-        // 토큰을 포함한 리다이렉트 처리
+        // 토큰을 포함한 URL 리다이렉트 처리
         response.sendRedirect("http://localhost:3000/login-success?token=" + token);
     }
+
 }

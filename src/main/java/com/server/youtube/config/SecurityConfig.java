@@ -25,6 +25,9 @@ public class SecurityConfig {
     @Autowired
     private OAuth2SuccessHandler handler;
 
+    // 백엔드 서버 : http://localhost:8080
+    // 클라이언트 서버 : http://localhost:3000
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http

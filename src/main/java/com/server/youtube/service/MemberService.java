@@ -22,9 +22,10 @@ public class MemberService {
     }
 
     public Member login(String id, String password) {
-        Member member = dao.findById(id).orElseThrow(() -> new UsernameNotFoundException("Member Not Found"))
-                if(bcpe.matches(password, member.getPassword())) {
-                    return member;
-                }
+        Member member = dao.findById(id).orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+        if(bcpe.matches(password, member.getPassword())) {
+            return member;
+        }
+        return null;
     }
 }
