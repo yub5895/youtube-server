@@ -10,11 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class VideoService {
-
     @Autowired
     private VideoDAO dao;
 
@@ -23,6 +20,11 @@ public class VideoService {
 
     public Page<Video> viewAll(BooleanBuilder builder, Pageable pageable) {
         return dao.findAll(builder, pageable);
+    }
+
+    public Video view(int code) {
+        dao.updateCount(code);
+        return dao.findById(code).get();
     }
 
     public Video create(Video vo) {

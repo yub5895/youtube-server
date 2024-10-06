@@ -19,6 +19,7 @@ public class Channel {
     @Id
     @Column(name="channel_code")
     private int channelCode;
+
     @Column(name="channel_img")
     private String channelImg;
 

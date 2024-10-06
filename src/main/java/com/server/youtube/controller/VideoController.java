@@ -53,7 +53,7 @@ public class VideoController {
 
         // WHERE video_title LIKE CONCAT('%', keyword, '%')
         // WHERE video_title LIKE '%keyword%'
-        if(keyword!=null) {
+        if(keyword!=null && !keyword.equals("")) {
             // 원하는 조건은 필드값과 같이 결합해서 생성
             BooleanExpression expression = qVideo.videoTitle.like("%" + keyword + "%");
 
@@ -93,5 +93,12 @@ public class VideoController {
                 .channel(service.viewChannel(dto.getChannelCode()))
                 .build());
         return ResponseEntity.ok(video);
+    }
+
+    // 비디오 1개 보기
+    // GET - http://localhost:8080/api/video/1
+    @GetMapping("/video/{code}")
+    public ResponseEntity view(@PathVariable(name="code") int code) {
+        return ResponseEntity.ok(service.view(code));
     }
 }
