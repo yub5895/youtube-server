@@ -2,10 +2,7 @@ package com.server.youtube.controller;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.server.youtube.domain.Channel;
-import com.server.youtube.domain.QVideo;
-import com.server.youtube.domain.Video;
-import com.server.youtube.domain.VideoDTO;
+import com.server.youtube.domain.*;
 import com.server.youtube.service.VideoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -100,5 +98,12 @@ public class VideoController {
     @GetMapping("/video/{code}")
     public ResponseEntity view(@PathVariable(name="code") int code) {
         return ResponseEntity.ok(service.view(code));
+    }
+
+    // 비디오 1개에 따른 댓글 전체 조회
+    @GetMapping("/video/{videoCode}/comment")
+    public ResponseEntity comments(@PathVariable(name="videoCode") int videoCode) {
+        List<Comment> comments = service.getTopComments(videoCode);
+        return  ResponseEntity.ok(comments);
     }
 }
