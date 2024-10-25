@@ -100,10 +100,5 @@ public class VideoController {
         return ResponseEntity.ok(service.view(code));
     }
 
-    // 비디오 1개에 따른 댓글 전체 조회
-    @GetMapping("/video/{videoCode}/comment")
-    public ResponseEntity comments(@PathVariable(name="videoCode") int videoCode) {
-        List<Comment> comments = service.getTopComments(videoCode);
-        return  ResponseEntity.ok(comments);
-    }
+
 }

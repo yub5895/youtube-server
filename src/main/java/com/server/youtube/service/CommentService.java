@@ -27,18 +27,84 @@ public class CommentService {
 
     // 비디오별 상위 댓글들 보여주기 -> SQL문 짜보기!
     /*
-    * SELECT * FROM comment WHERE video_code = 1
-    *   AND parent_code = 0
-    *  ORDER BY comment_date DESC
-    * 이걸 쿼리팩토리로 짠게 아래
-    * */
+     *  SELECT * FROM comment
+     *  WHERE video_code = 1
+     *    AND parent_code = 0
+     *  ORDER BY comment_date DESC
+     * */
     public List<Comment> getTopComments(int videoCode) {
         return queryFactory
                 .selectFrom(qComment)
-                .where(qComment.videoCode.eq(videoCode)) // videoCode는 항상 변하기때문에, 파라미터로 받아서 같은경우에만 나오도록 조건
+                .where(qComment.videoCode.eq(videoCode))
                 .where(qComment.parentCode.eq(0))
                 .orderBy(qComment.commentDate.desc())
                 .fetch();
     }
 
+    // 각 댓글의 하위 댓글들 가져오기
+    /*
+     *  SELECT * FROM comment
+     * WHERE parent_code = 1
+     * ORDER BY comment_date ASC
+     * */
+    public List<Comment> getReComments(int parentCode) {
+        return queryFactory.selectFrom(qComment)
+                .where(qComment.parentCode.eq(parentCode))
+                .orderBy(qComment.commentDate.asc())
+                .fetch();
+    }
+
+    // 댓글 수정
+    public void update(Comment vo) {
+        Comment comment = dao.findById(vo.getCommentCode()).get();
+        comment.setCommentText(vo.getCommentText());
+        dao.save(comment);
+    }
+
+    // 댓글 삭제
+    public void remove(int commentCode) {
+
+        // 조건 : 자식 댓글이 있는지 체크
+        // SELECT count(*) FROM comment
+        // WHERE parent_code = :commentCode
+        List<Comment> comments = queryFactory.selectFrom(qComment)
+                .where(qComment.parentCode.eq(commentCode)).fetch();
+        int childCount = comments.size();
+
+        Comment comment = dao.findById(commentCode).get();
+
+        if (childCount > 0) {
+            // 자식 댓글이 있는 경우
+            // -> 부모 댓글은 삭제되지 않고 "삭제된 댓글입니다" 표시
+            // -> isDelete 값 true로 변환
+            comment.setDelete(true);
+            dao.save(comment);
+        } else {
+            // 자식 댓글이 없는 경우
+            // -> 부모 댓글 DB에서 완전 삭제
+            dao.deleteById(commentCode);
+        }
+        // 해당 댓글의 부모 댓글이 있는지 체크
+        deleteParent(parent.getParentCode());
+    }
+
+    // 부모 댓글 삭제 확인 -> 재귀법
+    public void deleteParent(int parentCode) {
+        if (parentCode > 0) {
+            // 부모 댓글의 자식 댓글이 모두 삭제되었는지 체크
+            List<Comment> parents = queryFactory.selectFrom(qComment)
+                    .where(qComment.parentCode.eq(parentCode)).fetch();
+            int parentCount = parents.size(); // 0인 경우
+            if (parentCount == 0) {
+                // 부모 댓글이 "삭제된 댓글입니다" isDelete가 true인 상태인 경우
+                Comment parent = dao.findById(parentCode).get();
+                if (parent.isDelete()) {
+                    dao.deleteById(parent.getCommentCode());
+
+                    // -> 여기서 또 부모 코드로 처리! if(parent.getParentCode() > 0)
+                    deleteParent(parent.getParentCode());
+                }
+            }
+        }
+    }
 }

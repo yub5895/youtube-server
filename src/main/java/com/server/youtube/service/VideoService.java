@@ -2,6 +2,7 @@ package com.server.youtube.service;
 
 import com.querydsl.core.BooleanBuilder;
 import com.server.youtube.domain.Channel;
+import com.server.youtube.domain.Comment;
 import com.server.youtube.domain.Video;
 import com.server.youtube.repo.ChannelDAO;
 import com.server.youtube.repo.VideoDAO;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class VideoService {
@@ -34,4 +37,5 @@ public class VideoService {
     public Channel viewChannel(int code) {
         return channelDAO.findById(code).get();
     }
+
 }

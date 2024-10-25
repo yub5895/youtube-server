@@ -32,8 +32,14 @@ public class Comment {
     @Column(name="video_code")
     private int videoCode;
 
+    @Column(name="parent_code")
+    private int parentCode;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="parent_code", referencedColumnName = "comment_code", insertable = false, updatable = false)
-    private Comment parentCode;
+    private Comment parent;
+
+    @Column(name="is_delete")
+    private boolean isDelete;
 }

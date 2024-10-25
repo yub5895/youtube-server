@@ -25,8 +25,9 @@ public class SubscribeService {
     }
 
     // 구독 추가
-    public void create(Subscribe vo) {
-        dao.save(vo);
+    public Subscribe create(Subscribe vo) {
+        vo.setId(getId());
+        return dao.save(vo);
     }
 
     // 구독 취소
